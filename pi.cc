@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
       if ((i & 1) == 0) {
         term = -term;
       }
-      local_sum += sin(term);
+      local_sum += term;
     }
   }
 
