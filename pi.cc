@@ -1,4 +1,5 @@
 #include <boost/mpi.hpp>
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include "omp.h"
@@ -9,6 +10,8 @@ int main(int argc, char** argv) {
   int id = world.rank();
   int n = world.size();
   const int N = 1000000000;
+
+  const auto& init_time = std::chrono::high_resolution_clock::now();
 
   double local_sum = 0.0;
 
@@ -34,7 +37,7 @@ int main(int argc, char** argv) {
       if ((i & 1) == 0) {
         term = -term;
       }
-      thread_sum += sin(sin(sin(term)));
+      thread_sum += sin(term);
     }
 #pragma omp atomic
     local_sum += thread_sum;
@@ -42,8 +45,13 @@ int main(int argc, char** argv) {
 
   boost::mpi::reduce(world, local_sum, global_sum, std::plus<double>(), 0);
 
+  const auto& end_time = std::chrono::high_resolution_clock::now();
+
   if (id == 0) {
     printf("sum: %.10f\n", global_sum);
+    printf(
+        "Time: %f\n",
+        std::chrono::duration_cast<std::chrono::duration<double>>(end_time - init_time).count());
   }
   // int pid =
 
