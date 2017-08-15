@@ -1,4 +1,5 @@
 .vscode
 pi
+pi_mpi
 pi.out*
 slurm*
